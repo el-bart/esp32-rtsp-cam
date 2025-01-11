@@ -3,13 +3,6 @@
 #include "watchdog.hpp"
 #include "wifi_creds.hpp"
 
-inline void wifi_init()
-{
-  Serial.println("initializing WiFi");
-  WiFi.mode(WIFI_STA);  // client mode
-  WiFi.disconnect();
-}
-
 
 namespace detail
 {
@@ -31,7 +24,39 @@ inline char const* enc_type(int i)
   }
   return "unknown";
 }
+
+
+inline void wifi_disconnect()
+{
+  Serial.println("disconnecting from WiFi");
+  WiFi.mode(WIFI_STA);  // client mode
+  WiFi.disconnect();
+  watchdog_reset();
+}
+
+
+inline bool wifi_wait_for_connection()
+{
+  for(auto i=0; i<30*2; ++i)
+  {
+    if( WiFi.status() == WL_CONNECTED )
+      return true;
+    delay(500);
+    Serial.print(".");
+    watchdog_reset();
+  }
+  return false;
+}
 } // namespace detail
+
+
+
+inline void wifi_init()
+{
+  Serial.println("initializing WiFi");
+  WiFi.mode(WIFI_STA);  // client mode
+  WiFi.disconnect();
+}
 
 
 inline void wifi_scan()
@@ -39,6 +64,11 @@ inline void wifi_scan()
   watchdog_reset();
   Serial.println("scanning for nearby WiFi networks");
   auto const n = WiFi.scanNetworks();
+  if( n < 0)
+  {
+    Serial.println("WiFi scanning failed");
+    return;
+  }
   Serial.printf("WiFi scanning completed - got %d instances:\r\n", n);
   watchdog_reset();
 
@@ -55,8 +85,18 @@ inline void wifi_scan()
 }
 
 
-inline bool wifi_connect(char const* ssid, char const* psk)
+inline bool wifi_connect(char const* ssid, char const* pass)
 {
-  Serial.printf("connecting to WiFi: %s\r\n", ssid);
-  return false; // TODO
+  Serial.printf("connecting to WiFi: %s: ", ssid);
+  WiFi.begin(ssid, pass);
+
+  if( not detail::wifi_wait_for_connection() )
+  {
+    Serial.println("connection FAILED");
+    detail::wifi_disconnect();
+    return false;
+  }
+  Serial.println();
+  Serial.printf("connected! local IP: %s", WiFi.localIP().toString().c_str());
+  return true;
 }
