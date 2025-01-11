@@ -55,11 +55,14 @@ inline bool wifi_wait_for_connection()
 
 inline void wifi_init()
 {
+  // with BOD enabled, chip freezes on WiFi init every now and then... not an option.
+#if 0
   Serial.println("disabling brownout detection");
   // this is a hack for a broken ESP32-cam design, where voltage is too low
   // and decoupling capacitors are not enough. ugly, but seems to be working
   // for now at least...
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+#endif
 
   Serial.println("initializing WiFi");
   WiFi.mode(WIFI_STA);  // client mode
