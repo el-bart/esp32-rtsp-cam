@@ -1,0 +1,4 @@
+// copy this file as `wifi_creds.hpp` and put credentials there
+// (the file will NOT be kept under VCS, for security reasons)
+constexpr char* wifi_ssid = "my_iot_network";
+constexpr char* wifi_pass = "topsi_kret";

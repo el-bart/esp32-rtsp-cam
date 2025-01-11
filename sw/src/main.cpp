@@ -1,5 +1,6 @@
-#include <Arduino.h>
+#include <WiFi.h>
 #include <esp_task_wdt.h>
+#include "wifi_creds.hpp"
 
 void setup()
 {
