@@ -1,5 +1,5 @@
 #include <WiFi.h>
-#include <esp_task_wdt.h>
+#include "watchdog.hpp"
 #include "wifi_creds.hpp"
 
 void setup()
@@ -9,8 +9,7 @@ void setup()
   Serial.println();
   Serial.println("booting");
 
-  esp_task_wdt_init(5/*s*/, true);
-  esp_task_wdt_add(NULL);   // add current task to watchdog watch
+  watchdog_init();
   Serial.println("watchdog enabled");
 
   // TODO
@@ -19,7 +18,7 @@ void setup()
 void loop()
 {
   Serial.println("i'm alive!");
-  esp_task_wdt_reset();
+  watchdog_reset();
   delay(1000);
   // TODO
 }
