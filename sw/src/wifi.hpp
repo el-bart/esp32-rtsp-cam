@@ -2,6 +2,8 @@
 #include <WiFi.h>
 #include "watchdog.hpp"
 #include "wifi_creds.hpp"
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
 
 
 namespace detail
@@ -53,6 +55,12 @@ inline bool wifi_wait_for_connection()
 
 inline void wifi_init()
 {
+  Serial.println("disabling brownout detection");
+  // this is a hack for a broken ESP32-cam design, where voltage is too low
+  // and decoupling capacitors are not enough. ugly, but seems to be working
+  // for now at least...
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+
   Serial.println("initializing WiFi");
   WiFi.mode(WIFI_STA);  // client mode
   WiFi.disconnect();
