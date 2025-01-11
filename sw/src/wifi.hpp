@@ -41,9 +41,11 @@ inline bool wifi_wait_for_connection()
 {
   for(auto i=0; i<30*2; ++i)
   {
-    if( WiFi.status() == WL_CONNECTED )
-      return true;
-    delay(500);
+    for(auto j=0; j<10; ++j)
+      if( WiFi.status() == WL_CONNECTED )
+        return true;
+      else
+        delay(100);
     Serial.print(".");
     watchdog_reset();
   }
@@ -91,7 +93,6 @@ inline void wifi_scan()
     Serial.printf("%30s | %4d | %s\r\n", ssid.c_str(), rssi, enc);
   }
   Serial.println();
-
   watchdog_reset();
 }
 
