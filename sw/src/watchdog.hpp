@@ -3,7 +3,7 @@
 
 inline void watchdog_init()
 {
-  esp_task_wdt_init(5/*s*/, true);
+  esp_task_wdt_init(30/*s*/, true);
   esp_task_wdt_add(NULL);   // add current task to watchdog watch
 }
 
