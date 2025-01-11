@@ -39,7 +39,7 @@ inline void wifi_disconnect()
 
 inline bool wifi_wait_for_connection()
 {
-  for(auto i=0; i<30*2; ++i)
+  for(auto i=0; i<30/*s*/; ++i)
   {
     for(auto j=0; j<10; ++j)
       if( WiFi.status() == WL_CONNECTED )
