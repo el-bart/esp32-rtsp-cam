@@ -3,7 +3,6 @@
 #include <OV2640Streamer.h>
 #include <CRtspSession.h>
 #include <list>
-#include <memory>
 
 struct RTSP_server final
 {
@@ -19,7 +18,6 @@ struct RTSP_server final
   RTSP_server& operator=(RTSP_server&&) = delete;
 
   static constexpr uint16_t port() { return 8554; }
-  static constexpr unsigned fps() { return 10; }
 
   void update()
   {
@@ -31,10 +29,10 @@ struct RTSP_server final
 private:
   struct RTSP_client final
   {
-    RTSP_client(WiFiClient client, OV2640 &cam):
-      client_{ std::move(client) },
-      streamer_{new OV2640Streamer{&client, cam}},
-      session_{new CRtspSession{&client_, streamer_.get()}}
+    RTSP_client(WiFiClient const& client, OV2640 &cam):
+      client_{client},
+      streamer_{&client_, cam},
+      session_{&client_, &streamer_}
     { }
 
     RTSP_client(RTSP_client const&) = delete;
@@ -43,10 +41,9 @@ private:
     RTSP_client& operator=(RTSP_client&&) = delete;
 
     WiFiClient client_;
-    // technically the two fields below could be just a regular members. however due to some oddball bug in
-    // RTSP, SW crashes when these are not dynamically allocated...
-    std::unique_ptr<OV2640Streamer> streamer_;
-    std::unique_ptr<CRtspSession> session_;
+    OV2640Streamer streamer_;
+    CRtspSession session_;
+    uint32_t last_frame_time_{};
   };
 
 
@@ -68,19 +65,37 @@ private:
     if(not client)
       return;
     Serial.printf("new RTSP client: %s\r\n", client.remoteIP().toString().c_str());
-    clients_.emplace_back(std::move(client), cam_);
+    clients_.emplace_back(client, cam_);
   }
 
   void handle_all_clients()
   {
     for(auto& c: clients_)
       send_frame_to(c);
+
+    for(auto& c: clients_)
+      if( not c.session_.handleRequests(5*1000/*ms*/) )
+        Serial.printf("RTSP_server::send_frame_to(): handleRequiest(): failed for client %s\r\n", c.client_.remoteIP().toString().c_str());
+  }
+
+  bool is_time_for_frame(RTSP_client const& c, uint32_t now) const
+  {
+    // 1ms timer on 32-bit rolls over every ~50d - this prevents a freeze when this happens
+    if(now < c.last_frame_time_)
+      return true;
+
+    auto constexpr inter_frame_delay_ms = 8000;
+    return c.last_frame_time_ + inter_frame_delay_ms <= now;
   }
 
   void send_frame_to(RTSP_client& c)
   {
-    c.session_->handleRequests(0);
-    c.session_->broadcastCurrentFrame( millis() );
+    auto const now = millis();
+    if( not is_time_for_frame(c, now) )
+      return;
+    Serial.println("RTSP_server::send_frame_to(): broadcastCurrentFrame(): sending frame");
+    c.session_.broadcastCurrentFrame(now);
+    c.last_frame_time_ = now;
   }
 
   OV2640& cam_;
