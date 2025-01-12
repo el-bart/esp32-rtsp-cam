@@ -56,11 +56,10 @@ void setup()
 
 void loop()
 {
+  watchdog_reset();
   try
   {
-    watchdog_reset();
     rtsp_server->update();
-    delay( 1000 / RTSP_server::fps() );
   }
   catch(std::exception const& ex)
   {
