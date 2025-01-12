@@ -33,8 +33,8 @@ private:
   {
     RTSP_client(WiFiClient client, OV2640 &cam):
       client_{ std::move(client) },
-      streamer_{&client, cam},
-      session_{&client_, &streamer_}
+      streamer_{new OV2640Streamer{&client, cam}},
+      session_{new CRtspSession{&client_, streamer_.get()}}
     { }
 
     RTSP_client(RTSP_client const&) = delete;
@@ -43,8 +43,8 @@ private:
     RTSP_client& operator=(RTSP_client&&) = delete;
 
     WiFiClient client_;
-    OV2640Streamer streamer_;
-    CRtspSession session_;
+    std::unique_ptr<OV2640Streamer> streamer_;
+    std::unique_ptr<CRtspSession> session_;
     //CRtspSession session_;
     //CStreamer streamer_;
   };
@@ -83,9 +83,9 @@ private:
 
   void send_frame_to(RTSP_client& c)
   {
-    c.session_.handleRequests(0);
+    c.session_->handleRequests(0);
     //c.session_.broadcastCurrentFrame( millis() );
-    c.streamer_.streamImage( millis() );
+    c.streamer_->streamImage( millis() );
   }
 
   OV2640& cam_;
