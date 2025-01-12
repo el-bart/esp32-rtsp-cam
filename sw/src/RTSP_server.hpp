@@ -74,8 +74,7 @@ private:
       send_frame_to(c);
 
     for(auto& c: clients_)
-      if( not c.session_.handleRequests(5*1000/*ms*/) )
-        Serial.printf("RTSP_server::send_frame_to(): handleRequiest(): failed for client %s\r\n", c.client_.remoteIP().toString().c_str());
+      c.session_.handleRequests(0);
   }
 
   bool is_time_for_frame(RTSP_client const& c, uint32_t now) const
@@ -84,7 +83,7 @@ private:
     if(now < c.last_frame_time_)
       return true;
 
-    auto constexpr inter_frame_delay_ms = 8000;
+    auto constexpr inter_frame_delay_ms = 300;
     return c.last_frame_time_ + inter_frame_delay_ms <= now;
   }
 
@@ -93,7 +92,7 @@ private:
     auto const now = millis();
     if( not is_time_for_frame(c, now) )
       return;
-    Serial.println("RTSP_server::send_frame_to(): broadcastCurrentFrame(): sending frame");
+    Serial.printf("RTSP_server::send_frame_to(): broadcastCurrentFrame(): sending frame at %lu\r\n", now);
     c.session_.broadcastCurrentFrame(now);
     c.last_frame_time_ = now;
   }
