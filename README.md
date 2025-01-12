@@ -10,6 +10,6 @@ WiFi PSK is to be provided in the sources.
 
 use:
 ```
-vlc -vvv --rtsp-tcp rtsp://<esp32-cam-IP>:8554/mjpeg/2
+vlc -vvv --rtsp-timeout=30 --rtsp-tcp rtsp://<esp32-cam-IP>:8554/mjpeg/2
 ```
 to view the live stream.
