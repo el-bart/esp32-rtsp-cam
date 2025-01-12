@@ -25,11 +25,11 @@ void setup()
       throw std::runtime_error{"setup(): failed to initialize camera"};
 
     wifi_init();
-    do
+    while( not wifi_connect(wifi_ssid, wifi_pass) )
     {
+      Serial.println("failed to connect to WiFi");
       wifi_scan();
     }
-    while(not wifi_connect(wifi_ssid, wifi_pass));
 
     Serial.printf("starting RTSP server on %s:%d\r\n", WiFi.localIP().toString().c_str(), RTSP_server::port());
     rtsp_server.reset(new RTSP_server{camera});
