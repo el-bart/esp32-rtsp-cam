@@ -41,7 +41,7 @@ void setup()
     }
 
     // NOTE: trailing slash in RTSP is crucial, as otherwise library crashes...
-    Serial.printf("starting RTSP server on rtsp://%s:%d/mjpeg/1\r\n", WiFi.localIP().toString().c_str(), RTSP_server::port());
+    Serial.printf("starting RTSP server on rtsp://%s:%d/mjpeg/2\r\n", WiFi.localIP().toString().c_str(), RTSP_server::port());
     rtsp_server.reset(new RTSP_server{camera});
 
     Serial.println("initialization sequence completed!");
