@@ -109,6 +109,6 @@ inline bool wifi_connect(char const* ssid, char const* pass)
     return false;
   }
   Serial.println();
-  Serial.printf("connected! local IP: %s", WiFi.localIP().toString().c_str());
+  Serial.printf("connected! local IP: %s\r\n", WiFi.localIP().toString().c_str());
   return true;
 }
