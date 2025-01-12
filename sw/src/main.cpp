@@ -17,6 +17,15 @@ void setup()
     Serial.println("##################################");
     Serial.println("booting");
 
+#if 1
+    Serial.println("disabling brownout detection");
+    // this is a hack for a broken ESP32-cam design, where voltage is too low
+    // and decoupling capacitors are not enough. ugly, but seems to be working
+    // for now at least...
+    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+#endif
+
+
     watchdog_init();
     Serial.println("watchdog enabled");
 
