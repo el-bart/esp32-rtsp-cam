@@ -21,7 +21,7 @@ void setup()
     Serial.println("watchdog enabled");
 
     Serial.println("initializing camera");
-    if( camera.init(esp32cam_config) != ESP_OK )
+    if( camera.init(esp32cam_aithinker_config) != ESP_OK )
       throw std::runtime_error{"setup(): failed to initialize camera"};
 
     wifi_init();
