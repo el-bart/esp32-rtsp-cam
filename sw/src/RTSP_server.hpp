@@ -45,8 +45,6 @@ private:
     WiFiClient client_;
     std::unique_ptr<OV2640Streamer> streamer_;
     std::unique_ptr<CRtspSession> session_;
-    //CRtspSession session_;
-    //CStreamer streamer_;
   };
 
 
@@ -73,10 +71,6 @@ private:
 
   void handle_all_clients()
   {
-    if( clients_.empty() )
-      return;
-
-    cam_.run(); // get new frame
     for(auto& c: clients_)
       send_frame_to(c);
   }
@@ -84,8 +78,7 @@ private:
   void send_frame_to(RTSP_client& c)
   {
     c.session_->handleRequests(0);
-    //c.session_.broadcastCurrentFrame( millis() );
-    c.streamer_->streamImage( millis() );
+    c.session_->broadcastCurrentFrame( millis() );
   }
 
   OV2640& cam_;
