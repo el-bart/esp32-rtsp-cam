@@ -43,6 +43,8 @@ private:
     RTSP_client& operator=(RTSP_client&&) = delete;
 
     WiFiClient client_;
+    // technically the two fields below could be just a regular members. however due to some oddball bug in
+    // RTSP, SW crashes when these are not dynamically allocated...
     std::unique_ptr<OV2640Streamer> streamer_;
     std::unique_ptr<CRtspSession> session_;
   };
