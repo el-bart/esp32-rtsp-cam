@@ -2,8 +2,6 @@
 #include <WiFi.h>
 #include "watchdog.hpp"
 #include "wifi_creds.hpp"
-#include "soc/soc.h"
-#include "soc/rtc_cntl_reg.h"
 
 
 namespace detail

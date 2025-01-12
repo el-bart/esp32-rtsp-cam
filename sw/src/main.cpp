@@ -3,6 +3,8 @@
 #include "wifi.hpp"
 #include "wifi_creds.hpp"
 #include "RTSP_server.hpp"
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
 
 
 std::unique_ptr<RTSP_server> rtsp_server;
