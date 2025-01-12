@@ -31,7 +31,7 @@ void setup()
       wifi_scan();
     }
 
-    Serial.printf("starting RTSP server on %s:%d\r\n", WiFi.localIP().toString().c_str(), RTSP_server::port());
+    Serial.printf("starting RTSP server on rtsp://%s:%d/\r\n", WiFi.localIP().toString().c_str(), RTSP_server::port());
     rtsp_server.reset(new RTSP_server{camera});
 
     Serial.println("initialization sequence completed!");
