@@ -58,6 +58,11 @@ in case connecting to WiFi would fail, board will in loop:
 
 use:
 ```
-./receive_stream <IP_of_your_esp32-cam>
+./receive_stream_vlc <IP_of_your_esp32-cam>
 ```
-to view the live stream with `vlc`.
+to view the live stream with `vlc`, or:
+```
+./receive_stream_mpv <IP_of_your_esp32-cam>
+```
+to view the live stream with `mpv`.
+this is a better option for scripting.

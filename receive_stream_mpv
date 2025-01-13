@@ -1,0 +1,25 @@
+#!/bin/bash
+if [ $# -ne 1 ]
+then
+  echo "$0 <esp32-cam_IP>" >&2
+  exit 2
+fi
+IP=$1
+shift 1
+
+timeout_s=10
+
+flags=()
+flags+=(-v) # be verbose
+flags+=(--rtsp-transport=tcp)
+#flags+=(--keep-open-pause=no)
+#flags+=(--keep-open)
+flags+=(--cache=no --no-cache)
+flags+=(--profile=low-latency)
+#flags+=(--demuxer-thread=no --demuxer-readahead-secs=0)
+flags+=(--script="mpv.lua") # checks for stream position and reconnects if no change for 5s
+#flags+=(--fs)
+#flags+=(--network-timeout=10)
+flags+=("rtsp://$IP:8554/mjpeg/2") # stream address
+
+exec mpv "${flags[@]}"
