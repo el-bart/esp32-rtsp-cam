@@ -1,0 +1,16 @@
+#!/bin/bash
+if [ $# -ne 1 ]
+then
+  echo "$0 <esp32-cam_IP>" >&2
+  exit 2
+fi
+IP=$1
+shift 1
+
+exec vlc \
+  -vvv \
+  --network-caching=0 --file-caching=0 --rtsp-caching=0 --live-caching=0 \
+  --no-drop-late-frames --no-skip-frames \
+  --rtsp-tcp \
+  --rtsp-timeout=20000 --rtsp-session-timeout=20000 --ipv4-timeout=20000 \
+  "rtsp://$IP:8554/mjpeg/2"
