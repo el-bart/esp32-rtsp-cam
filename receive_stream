@@ -7,10 +7,22 @@ fi
 IP=$1
 shift 1
 
-exec vlc \
-  -vvv \
-  --network-caching=0 --file-caching=0 --rtsp-caching=0 --live-caching=0 \
-  --no-drop-late-frames --no-skip-frames \
-  --rtsp-tcp \
-  --rtsp-timeout=20000 --rtsp-session-timeout=20000 --ipv4-timeout=20000 \
-  "rtsp://$IP:8554/mjpeg/2"
+timeout_s=10
+
+flags=()
+flags+=(-vvv) # verbose
+flags+=(--no-qt-error-dialogs) # do not show pop-up windows
+#flags+=(--loop) # restart stream on failure
+flags+=(--network-caching=0 --file-caching=0 --rtsp-caching=0 --live-caching=0) # disable any caching
+flags+=(--no-drop-late-frames --no-skip-frames) # never drop frames
+flags+=(--rtsp-tcp) # TCP streaming
+flags+=(--rtsp-timeout="${timeout_s}000" --rtsp-session-timeout="${timeout_s}000" --ipv4-timeout="${timeout_s}000")
+flags+=("rtsp://$IP:8554/mjpeg/2") # stream address
+
+
+set -x
+while sleep 1
+do
+  vlc "${flags[@]}"
+  date
+done
