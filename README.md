@@ -49,6 +49,10 @@ initialization sequence completed!
 ----------------------------------
 ```
 
+in case connecting to WiFi would fail, board will in loop:
+* show a list of visible WiFi networks
+* retry connecting to the predefined one
+
 
 ## client
 
