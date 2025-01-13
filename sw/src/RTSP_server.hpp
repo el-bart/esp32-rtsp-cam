@@ -83,7 +83,7 @@ private:
     if(now < c.last_frame_time_)
       return true;
 
-    auto constexpr inter_frame_delay_ms = 300;
+    auto constexpr inter_frame_delay_ms = 200;
     return c.last_frame_time_ + inter_frame_delay_ms <= now;
   }
 
